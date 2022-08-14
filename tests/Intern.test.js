@@ -16,6 +16,18 @@ describe('Intern Class Init', () => {
 
         expect(intern).toBeInstanceOf(Employee);
     })
+
+    it('should throw an error if provided a school that is not a string',  () => {
+        const intern = () => new Intern('Randy',5,'example@email.edu',0);
+
+        expect(intern).toThrow();
+    })
+
+    it('should throw an error if provided no school',  () => {
+        const intern = () => new Intern('Randy',5,'example@email.edu',);
+
+        expect(intern).toThrow();
+    })
 })
 
 describe('getRole Method', () => {

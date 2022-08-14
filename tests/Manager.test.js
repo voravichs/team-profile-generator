@@ -16,6 +16,18 @@ describe('Manager Class Init', () => {
 
         expect(manager).toBeInstanceOf(Employee);
     })
+
+    it('should throw an error if provided no officeNum',  () => {
+        const manager = () => new Manager('Steve',3,'example@email.gov');
+
+        expect(manager).toThrow();
+    })
+
+    it('should throw an error if provided an officeNum that is not a number',  () => {
+        const manager = () => new Manager('Steve',3,'example@email.gov','0');
+
+        expect(manager).toThrow();
+    })
 })
 
 describe('getRole Method', () => {

@@ -16,6 +16,18 @@ describe('Engineer Class Init', () => {
 
         expect(engineer).toBeInstanceOf(Employee);
     })
+
+    it('should throw an error if provided a github that is not a string',  () => {
+        const engineer = () => new Engineer('Mike',7,'example@email.net',0);
+
+        expect(engineer).toThrow();
+    })
+
+    it('should throw an error if provided no school',  () => {
+        const engineer = () => new Engineer('Mike',7,'example@email.net');
+
+        expect(engineer).toThrow();
+    })
 })
 
 describe('getRole Method', () => {
