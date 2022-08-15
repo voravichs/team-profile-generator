@@ -61,8 +61,7 @@ function writeToFile(fileName,data) {
 
 // Create a function to initialize app
 // https://www.reddit.com/r/node/comments/9q3chw/looping_inquirerjs_prompts/
-//https://stackoverflow.com/questions/45060200/in-node-js-how-do-i-create-a-prompt-loop-using-inquirer
-// https://stackoverflow.com/questions/67477093/accessing-non-existent-property-of-module-exports-inside-circular-dependency-nod
+// https://stackoverflow.com/questions/45060200/in-node-js-how-do-i-create-a-prompt-loop-using-inquirer
 function mainMenuPrompt() {
     return inquirer
         .prompt(
@@ -161,7 +160,6 @@ function addEngineer(member) {
             try {
                 engineerData.push(new Engineer(name, id, email, github));
                 teamData = [managerData, engineerData, internData];
-                console.log(teamData);
                 console.log('\x1b[32m', `Engineer ${name} added, returning to main menu!`);
                 console.log('\n-------------\n');
                 mainMenuPrompt();
@@ -185,7 +183,6 @@ function addIntern(member) {
             try {
                 internData.push(new Intern(name, id, email, school));
                 teamData = [managerData, engineerData, internData];
-                console.log(teamData);
                 console.log('\x1b[32m', `Intern ${name} added, returning to main menu!`);
                 console.log('\n-------------\n');
                 mainMenuPrompt();

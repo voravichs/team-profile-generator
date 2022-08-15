@@ -23,7 +23,7 @@ describe('Engineer Class Init', () => {
         expect(engineer).toThrow();
     })
 
-    it('should throw an error if provided no school',  () => {
+    it('should throw an error if provided no github',  () => {
         const engineer = () => new Engineer('Mike',7,'example@email.net');
 
         expect(engineer).toThrow();
