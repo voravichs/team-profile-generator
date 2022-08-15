@@ -37,3 +37,11 @@ describe('getRole Method', () => {
         expect(manager.getRole()).toEqual('Manager');
     })
 })
+
+describe('getOffice Method', () => {
+    it("should return the office number when called",  () => {
+        const manager = new Manager('Steve',3,'example@email.gov',6);
+
+        expect(manager.getOffice()).toEqual(6);
+    })
+})

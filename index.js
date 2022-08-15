@@ -5,7 +5,10 @@ const Manager = require("./lib/Manager");
 const Engineer = require("./lib/Engineer.js");
 const Intern = require("./lib/Intern.js");
 
-const teamData = [];
+let teamData = [];
+let managerData = [];
+let engineerData = [];
+let internData = [];
 let currentID = 1;
 
 const employeeQuestions = [
@@ -47,11 +50,12 @@ const roleQuestions = [
 
 
 // Write HTML File
-function writeToFile(fileName, data) {
-    fs.writeFile(fileName,
+function writeToFile(fileName,data) {
+    fs.writeFile(
+        fileName, 
         generateHTML(data),
         (err) => err ? console.error(err)
-            : console.log('HTML written! You may find it in dist/team-profiles.html.')
+        : console.log('HTML Written! You may find it in dist/team-profile.html!')
     )
 }
 
@@ -59,7 +63,6 @@ function writeToFile(fileName, data) {
 // https://www.reddit.com/r/node/comments/9q3chw/looping_inquirerjs_prompts/
 //https://stackoverflow.com/questions/45060200/in-node-js-how-do-i-create-a-prompt-loop-using-inquirer
 // https://stackoverflow.com/questions/67477093/accessing-non-existent-property-of-module-exports-inside-circular-dependency-nod
-module.exports = { mainMenuPrompt };
 function mainMenuPrompt() {
     return inquirer
         .prompt(
@@ -73,19 +76,19 @@ function mainMenuPrompt() {
         .then(response => {
             switch (response.menu) {
                 case 'Print Current Team Members':
-                    console.log('\n-------------\n');        
+                    console.log('\n-------------\n');
                     printTeam();
                     break;
                 case 'Add a Team Member':
-                    console.log('\n-------------\n');        
+                    console.log('\n-------------\n');
                     addTeam();
                     break;
                 case 'Remove a Team Member':
-                    console.log('\n-------------\n');        
-                    removeTeam();
+                    console.log('\n-------------\n');
+                    removeRole();
                     break;
                 case 'Clear Team List':
-                    console.log('\n-------------\n');        
+                    console.log('\n-------------\n');
                     clearTeam();;
                     break;
                 case 'Write HTML File':
@@ -133,8 +136,9 @@ function addManager(member) {
             let email = member[2].trim();
             let officeNum = response.officeNum;
             try {
-                teamData.push(new Manager(name, id, email, parseInt(officeNum)));
-                console.log('\x1b[32m', `Manager ${name} added, return to main menu!`);
+                managerData.push(new Manager(name, id, email, parseInt(officeNum)));
+                teamData = [managerData, engineerData, internData];
+                console.log('\x1b[32m', `Manager ${name} added, returning to main menu!`);
                 console.log('\n-------------\n');
                 mainMenuPrompt();
             } catch (err) {
@@ -155,9 +159,10 @@ function addEngineer(member) {
             let email = member[2].trim();
             let github = response.github;
             try {
-                teamData.push(new Engineer(name, id, email, github));
+                engineerData.push(new Engineer(name, id, email, github));
+                teamData = [managerData, engineerData, internData];
                 console.log(teamData);
-                console.log('\x1b[32m', `Engineer ${name} added, return to main menu!`);
+                console.log('\x1b[32m', `Engineer ${name} added, returning to main menu!`);
                 console.log('\n-------------\n');
                 mainMenuPrompt();
             } catch (err) {
@@ -178,9 +183,10 @@ function addIntern(member) {
             let email = member[2].trim();
             let school = response.school;
             try {
-                teamData.push(new Intern(name, id, email, school));
+                internData.push(new Intern(name, id, email, school));
+                teamData = [managerData, engineerData, internData];
                 console.log(teamData);
-                console.log('\x1b[32m', `Intern ${name} added, return to main menu!`);
+                console.log('\x1b[32m', `Intern ${name} added, returning to main menu!`);
                 console.log('\n-------------\n');
                 mainMenuPrompt();
             } catch (err) {
@@ -192,32 +198,70 @@ function addIntern(member) {
         });
 }
 
-function removeTeam() {
+function removeRole() {
     return inquirer
-        .prompt(
+        .prompt([
             {
                 type: 'list',
-                message: "Which team member would you like to remove?",
-                name: 'remove',
-                choices: [...teamData, 'Return']
-            }
-        )
+                message: "Which position would you like to remove?",
+                name: 'roleRemove',
+                choices: ['manager', 'engineer', 'intern', 'Return']
+            },
+        ])
         .then(response => {
-            switch (response.remove) {
+            switch (response.roleRemove) {
                 case 'Return':
-                    console.log('\n-------------\n');    
+                    console.log('\n-------------\n');
                     mainMenuPrompt();
                     break;
                 default:
-                    let selectedIndex = teamData.findIndex(employee => employee.name === response.remove)
+                    console.log(response.roleRemove);
+                    removeTeam(response.roleRemove);
+            }
+        });
+}
+
+function removeTeam(role) {
+    let currentData = eval(role + 'Data');
+    if (!currentData.length) {
+        console.log('\x1b[31m','No team members currently in that role, returning to main menu.');
+        console.log('\n-------------\n');
+        mainMenuPrompt();
+        return
+    }
+    return inquirer
+        .prompt([
+            {
+                type: 'list',
+                message: "Which team member would you like to remove?",
+                name: 'teamRemove',
+                choices: [...currentData, 'Return']
+            }
+        ])
+        .then(response => {
+            switch (response.teamRemove) {
+                case 'Return':
+                    console.log('\n-------------\n');
+                    mainMenuPrompt();
+                    break;
+                default:
+                    let selectedIndex = currentData.findIndex(employee => employee.name === response.teamRemove)
                     console.log(selectedIndex);
-                    teamData.splice(selectedIndex, 1);
-                    console.log(`Removed ${response.remove} from team.`);
+                    currentData.splice(selectedIndex, 1);
+                    teamData = [managerData, engineerData, internData];
+                    console.log(`Removed ${response.teamRemove} from team.`);
                     console.log('\n-------------\n');
                     mainMenuPrompt();
                     break;
             }
         });
+}
+
+function clearTeam() {
+    teamData = [];
+    console.log(`Cleared saved team!`);
+    console.log('\n-------------\n');
+    mainMenuPrompt();
 }
 
 // Function call to initialize app
